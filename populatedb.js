@@ -18,8 +18,8 @@ db.on("error", console.error.bind(console, "MongoDB connection error:"));
 
 const authors = [];
 
-function authorCreate(username, password, cb) {
-  const hash = bcrypt.hash(password, 10);
+async function authorCreate(username, password, cb) {
+  const hash = await bcrypt.hash(password, 10);
   authorDetail = {
     username: username,
     password: hash,
@@ -39,14 +39,17 @@ function authorCreate(username, password, cb) {
 }
 
 function createAuthors(cb) {
-  async.parallel([
-    function (callback) {
-      authorCreate("Gbarda", "qqqqqq", callback);
-    },
-    function (callback) {
-      authorCreate("Abarda", "qqqqqq", callback);
-    },
-  ]);
+  async.parallel(
+    [
+      function (callback) {
+        authorCreate("Gbarda", "qqqqqq", callback);
+      },
+      function (callback) {
+        authorCreate("Abarda", "qqqqqq", callback);
+      },
+    ],
+    cb
+  );
 }
 
 async.series([createAuthors], function (err, results) {
