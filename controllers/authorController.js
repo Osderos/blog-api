@@ -1,7 +1,14 @@
 const Author = require("../models/author");
 
 exports.author_list = (req, res, next) => {
-  res.send("test");
+  Author.find()
+    .sort({ username: 1 })
+    .exec(function (err, list_authors) {
+      if (err) {
+        return next(err);
+      }
+      res.json(list_authors);
+    });
 };
 
 exports.author_create_post = (req, res, next) => {
