@@ -7,7 +7,7 @@ const post_controller = require("../controllers/postController");
 
 //Author routes
 router.get("/authors", author_controller.author_list);
-router.post("/authors", author_controller.author_create_post);
+router.post("/authors", author_controller.author_signup_post);
 router.put("/authors", author_controller.author_update_post);
 router.delete("/authors", author_controller.author_remove_post);
 
