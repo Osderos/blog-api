@@ -22,4 +22,11 @@ router.delete(
   author_controller.author_remove_post
 );
 
+//Post routes
+router.get("/posts", post_controller.post_listall_get);
+router.get("/post/:id", post_controller.post_getpost_get);
+router.post("/post/create", post_controller.post_create_post);
+router.post("/post/:id", post_controller.post_edit_post);
+router.delete("/post/:id", post_controller.post_delete);
+
 module.exports = router;

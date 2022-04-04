@@ -90,7 +90,10 @@ exports.author_login_post = (req, res, next) => {
 
 exports.author_logout_get = (req, res) => {
   req.logout();
-  res.redirect("/");
+  res.json({
+    status: "logout",
+    msg: "Please Log In again",
+  });
 };
 
 exports.author_update_post = [
