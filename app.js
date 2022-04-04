@@ -6,8 +6,10 @@ var logger = require("morgan");
 const cors = require("cors");
 
 const connectDB = require("./db");
+require("./passport_config");
 
 const apiRouter = require("./routes/api");
+const passport = require("passport");
 
 var app = express();
 

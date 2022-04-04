@@ -1,5 +1,6 @@
 const { body, validationResult } = require("express-validator");
 const passport = require("passport");
+const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const Author = require("../models/author");
 
@@ -7,6 +8,7 @@ require("dotenv").config();
 
 exports.author_list = (req, res, next) => {
   Author.find()
+    .select({ password: 0 })
     .sort({ username: 1 })
     .exec(function (err, list_authors) {
       if (err) {
@@ -65,6 +67,31 @@ exports.author_signup_post = [
     }
   },
 ];
+
+exports.author_login_post = (req, res, next) => {
+  passport.authenticate("local", { session: false }, (err, author, info) => {
+    if (err || !author) {
+      return res.status(400).json({
+        message: "Something is not right.",
+        author: author,
+      });
+    }
+    req.login(author, { session: false }, (err) => {
+      if (err) {
+        res.send(err);
+      }
+      const token = jwt.sign(author.toJSON(), process.env.TOKEN_SECRET, {
+        expiresIn: "300s",
+      });
+      return res.json({ author, token });
+    });
+  })(req, res);
+};
+
+exports.author_logout_get = (req, res) => {
+  req.logout();
+  res.redirect("/");
+};
 
 exports.author_update_post = (req, res, next) => {
   res.send("not implemented");
