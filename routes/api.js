@@ -11,7 +11,11 @@ router.get("/authors", author_controller.author_list);
 router.post("/author/signup", author_controller.author_signup_post);
 router.post("/author/login", author_controller.author_login_post);
 router.post("/author/logout", author_controller.author_logout_get);
-router.put("/authors", author_controller.author_update_post);
+router.post(
+  "/authors/:id",
+  passport.authenticate("jwt", { session: false }),
+  author_controller.author_update_post
+);
 router.delete(
   "/authors/:id",
   passport.authenticate("jwt", { session: false }),

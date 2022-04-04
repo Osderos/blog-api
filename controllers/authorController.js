@@ -93,14 +93,66 @@ exports.author_logout_get = (req, res) => {
   res.redirect("/");
 };
 
-exports.author_update_post = (req, res, next) => {
-  res.send("not implemented");
-};
+exports.author_update_post = [
+  body("username")
+    .trim()
+    .isLength({ min: 1 })
+    .withMessage("Enter a new username")
+    .escape(),
+  body("password", "Password must be min 3 chars.").trim().isLength({ min: 3 }),
+  body("passwordConfirm").custom((value, { req }) => {
+    if (value != req.body.password) {
+      throw new Error("Password confirmation does not match the password.");
+    }
+    return true;
+  }),
+  async (req, res, next) => {
+    const errors = validationResult(req);
+    try {
+      if (!errors.isEmpty()) {
+        return res.json({ errors: errors.array() });
+      }
+      Author.findOne({ username: req.body.username }).exec(async function (
+        err,
+        found_user
+      ) {
+        if (err) {
+          return next(err);
+        }
+        if (found_user) {
+          res.json({ error: "Username already exists!" });
+        } else {
+          const hash = await bcrypt.hash(req.body.password, 10);
+          const newAuthor = new Author({
+            username: req.body.username,
+            password: hash,
+            _id: req.params.id,
+          });
+
+          Author.findByIdAndUpdate(
+            req.params.id,
+            newAuthor,
+            {},
+            function (err) {
+              if (err) {
+                return res.json(err);
+              }
+              res.json({ message: "Author succesfully updated" });
+            }
+          );
+        }
+      });
+    } catch (err) {
+      res.json(err);
+    }
+  },
+];
 
 exports.author_remove_post = (req, res, next) => {
-  Author.findByIdAndRemove({_id:req.params.id},function(err,author){
-    if(err){return next(err)}
-    res.json(author);
-  })
-  
+  Author.findByIdAndRemove({ _id: req.params.id }, function (err, author) {
+    if (err) {
+      return next(err);
+    }
+    res.json({ author, message: "Author has been deleted" });
+  });
 };
