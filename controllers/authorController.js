@@ -98,5 +98,9 @@ exports.author_update_post = (req, res, next) => {
 };
 
 exports.author_remove_post = (req, res, next) => {
-  res.send("not implemented");
+  Author.findByIdAndRemove({_id:req.params.id},function(err,author){
+    if(err){return next(err)}
+    res.json(author);
+  })
+  
 };
