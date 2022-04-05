@@ -3,7 +3,7 @@ var router = express.Router();
 const passport = require("passport");
 
 const author_controller = require("../controllers/authorController");
-const message_controller = require("../controllers/messageController");
+const comment_controller = require("../controllers/commentController");
 const post_controller = require("../controllers/postController");
 
 //Author routes
@@ -40,5 +40,11 @@ router.delete(
   passport.authenticate("jwt", { session: false }),
   post_controller.post_delete
 );
+
+//Comment routes
+router.get('/post/:postid/comments', comment_controller.comment_listPostComments_get)
+router.post('/post/:postid/comments/create', comment_controller.comment_create_post)
+router.post('/post/:postid/comments/:id',comment_controller.comment_edit_post)
+router.delete('/post/:postid/comments/:id', comment_controller.comment_remove_post)
 
 module.exports = router;
