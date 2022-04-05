@@ -28,8 +28,13 @@ passport.use(
       jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
       secretOrKey: process.env.TOKEN_SECRET,
     },
-    function (jwtPayload, cb) {
-      return cb(null, jwtPayload);
+    async function (jwtPayload, cb) {
+      try {
+        const author = await Author.findById(jwtPayload.id);
+        return cb(null, author);
+      } catch (err) {
+        return cb(err);
+      }
     }
   )
 );

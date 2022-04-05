@@ -55,9 +55,13 @@ exports.author_signup_post = [
             if (err) {
               return res.status(500).json({ error: "Upload to db failed" });
             }
+            const token = jwt.sign(author.toJSON(), process.env.TOKEN_SECRET, {
+              expiresIn: "300s",
+            });
             return res.status(200).json({
               author: { _id: author._id, username: author.username },
               message: "Signup successful",
+              token,
             });
           });
         }
