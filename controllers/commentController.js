@@ -2,6 +2,19 @@ const { body, validationResult } = require("express-validator");
 const Post = require("../models/post");
 const Comment = require("../models/comment");
 
+exports.comment_ListAllComments_get = (req, res, next) => {
+  Comment.find().exec(function (err, comments_list) {
+    if (err) {
+      return next(err);
+    }
+
+    if (comments_list.length == 0) {
+      return res.status(404).json({ message: "No comments found" });
+    }
+    return res.status(200).json(comments_list);
+  });
+};
+
 exports.comment_listPostComments_get = (req, res, next) => {
   Comment.find().exec(function (err, comments_list) {
     if (err) {
@@ -16,33 +29,35 @@ exports.comment_listPostComments_get = (req, res, next) => {
 };
 
 exports.comment_create_post = [
-  body("title", "Title cannot be empty").trim().isLength({ min: 1 }),
-  body("text", "Add text").trim().isLength({ min: 1 }),
-  body("author", "Comment must have an author").trim().isLength({ min: 1 }),
+  body("titleComment", "Title cannot be empty").trim().isLength({ min: 1 }),
+  body("textComment", "Add text").trim().isLength({ min: 1 }),
+  body("authorComment", "Comment must have an author")
+    .trim()
+    .isLength({ min: 1 }),
 
-  (req, res, next) => {
+  async (req, res, next) => {
     const errors = validationResult(req);
+    const comment = new Comment({
+      titleComment: req.body.titleComment,
+      textComment: req.body.textComment,
+      authorComment: req.body.authorComment,
+      postComment: req.body.postComment.id,
+    });
+
     if (!errors.isEmpty()) {
       res.json({
         errors: errors.array(),
         data: req.body,
       });
       return;
+    } else {
+      comment.save(function (err) {
+        if (err) {
+          return next(err);
+        }
+        res.status(200).json({ message: "Comment added succesfuly", comment });
+      });
     }
-
-    const comment = new Comment({
-      title: req.body.title,
-      text: req.body.text,
-      author: req.body.author,
-      post: req.params.postid,
-    });
-
-    comment.save(function (err) {
-      if (err) {
-        return next(err);
-      }
-      res.status(200).json({ message: "Comment added succesfuly", comment });
-    });
   },
 ];
 

@@ -31,6 +31,7 @@ exports.post_create_post = [
       title: req.body.title,
       text: req.body.text,
       author: req.body.author,
+      
     });
 
     if (!errors.isEmpty()) {
@@ -46,7 +47,7 @@ exports.post_create_post = [
         if (err) {
           return next(err);
         }
-        res.status(200).json({ message: "Post successfuly created" });
+        res.status(200).json({ message: "Post successfuly created", post });
       });
     }
   },
@@ -99,3 +100,11 @@ exports.post_edit_post = [
     }
   },
 ];
+
+exports.post_publish = (req,res,next)=>{
+  res.send('not implemented')
+}
+
+exports.post_unpublish = (req,res,next)=>{
+  res.send('not implemented')
+}

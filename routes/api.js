@@ -27,7 +27,7 @@ router.get("/posts", post_controller.post_listall_get);
 router.get("/post/:id", post_controller.post_getpost_get);
 router.post(
   "/post/create",
-  passport.authenticate("jwt", { session: false }),
+  // passport.authenticate("jwt", { session: false }),
   post_controller.post_create_post
 );
 router.post(
@@ -42,8 +42,9 @@ router.delete(
 );
 
 //Comment routes
+router.get('/comments/all', comment_controller.comment_ListAllComments_get)
 router.get('/post/:postid/comments', comment_controller.comment_listPostComments_get)
-router.post('/post/:postid/comments/create', comment_controller.comment_create_post)
+router.post('/post/comments/create', comment_controller.comment_create_post)
 router.post('/post/:postid/comments/:id',comment_controller.comment_edit_post)
 router.delete('/post/:postid/comments/:id', comment_controller.comment_remove_post)
 
